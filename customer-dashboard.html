@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('cdash.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .success-message {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">Customer Preferences</h2>
+        <form id="customerPreferencesForm">
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" class="form-control" id="age" name="age" required min="1">
+            </div>
+            <div class="form-group">
+                <label for="country">Country:</label>
+                <input type="text" class="form-control" id="country" name="country" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+            <div class="form-group">
+                <label for="category">Preferred Category:</label>
+                <select id="category" name="category" class="form-control" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="office_supplies">Office Supplies</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="technology">Technology</option>
+                </select>
+            </div>
+            <div class="form-group" id="subcategoryDiv" style="display: none;">
+                <label for="subcategory">Subcategory:</label>
+                <select id="subcategory" name="subcategory" class="form-control" required>
+                    <!-- Subcategories will be populated dynamically -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Submit Preferences</button>
+            <div class="alert alert-success success-message mt-3" role="alert" id="successMessage">
+                Preferences submitted successfully!
+            </div>
+        </form>
+    </div>
+
+<script>
+    const subcategories = {
+        office_supplies: ["Binders", "Paper", "Storage", "Art"],
+        furniture: ["Furnishings", "Chairs", "Tables"],
+        technology: ["Phones", "Accessories", "Machines"]
+    };
+
+    // Populate subcategories based on selected category
+    document.getElementById('category').addEventListener('change', function () {
+        const selectedCategory = this.value;
+        const subcategorySelect = document.getElementById('subcategory');
+        const subcategoryDiv = document.getElementById('subcategoryDiv');
+
+        subcategorySelect.innerHTML = '<option value="" disabled selected>Select a subcategory</option>';
+
+        if (subcategories[selectedCategory]) {
+            subcategories[selectedCategory].forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub.toLowerCase();
+                option.textContent = sub;
+                subcategorySelect.appendChild(option);
+            });
+            subcategoryDiv.style.display = 'block';
+        } else {
+            subcategoryDiv.style.display = 'none';
+        }
+    });
+
+    // Submit form
+    document.getElementById('customerPreferencesForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const age = document.getElementById('age').value;
+        const country = document.getElementById('country').value;
+        const state = document.getElementById('state').value;
+        const category = document.getElementById('category').value;
+        const subcategory = document.getElementById('subcategory').value;
+
+        fetch('http://localhost:3000/api/savePreferences', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ age, country, state, category, subcategory })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const successMessage = document.getElementById('successMessage');
+                successMessage.textContent = "Thanks for submitting your response.";
+                successMessage.style.display = 'block';
+
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                    window.location.href = 'index.html'; // Redirect to index.html
+                }, 3000);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>

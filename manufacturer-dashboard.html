@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manufacturer Dashboard</title>
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            background: url('mdash.jpg') no-repeat center center fixed;
+            background-size: cover;
+            padding: 20px;
+        }
+        .chart-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 1000px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Histogram for Major Categories -->
+    <div class="chart-container">
+        <h2>Major Categories Demand Trends</h2>
+        <canvas id="majorCategoriesChart"></canvas>
+    </div>
+
+    <!-- Line Chart for Office Supplies -->
+    <div class="chart-container">
+        <h2>Office Supplies Demand Trends</h2>
+        <canvas id="officeSuppliesChart"></canvas>
+    </div>
+
+    <!-- Line Chart for Furniture -->
+    <div class="chart-container">
+        <h2>Furniture Demand Trends</h2>
+        <canvas id="furnitureChart"></canvas>
+    </div>
+
+    <!-- Line Chart for Technology -->
+    <div class="chart-container">
+        <h2>Technology Demand Trends</h2>
+        <canvas id="technologyChart"></canvas>
+    </div>
+
+    <script>
+        // Mock Data for Major Categories Histogram
+        const majorCategoriesData = {
+            labels: ['Office Supplies', 'Furniture', 'Technology'], // Major categories
+            datasets: [{
+                label: 'Demand (%)',
+                data: [44, 30, 26], // Updated data: Office Supplies (44%), Furniture (30%), Technology (26%)
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+            }]
+        };
+
+        // Data for Office Supplies Line Chart
+        const officeSuppliesData = {
+            labels: ['Binders', 'Paper', 'Storage', 'Art'], // X-axis
+            datasets: [{
+                label: 'Demand (%)',
+                data: [70, 60, 80, 50], // Replace with dynamic values
+                borderColor: '#FF6384',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        // Data for Furniture Line Chart
+        const furnitureData = {
+            labels: ['Furnishings', 'Chairs', 'Tables'], // X-axis
+            datasets: [{
+                label: 'Demand (%)',
+                data: [55, 75, 65], // Replace with dynamic values
+                borderColor: '#36A2EB',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        // Data for Technology Line Chart
+        const technologyData = {
+            labels: ['Phones', 'Accessories', 'Machines'], // X-axis
+            datasets: [{
+                label: 'Demand (%)',
+                data: [85, 60, 70], // Replace with dynamic values
+                borderColor: '#FFCE56',
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        // Chart Configuration Template for Line Charts
+        const lineChartConfig = (data) => ({
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true, position: 'top' }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Subcategories',
+                            font: {
+                                size: 16, // Larger font size
+                                weight: 'bold', // Bold font
+                            },
+                            color: '#333' // Darker font color
+                        },
+                        ticks: {
+                            font: {
+                                size: 14, // Tick font size
+                            },
+                            color: '#333' // Tick font color
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Demand (%)',
+                            font: {
+                                size: 16, // Larger font size
+                                weight: 'bold', // Bold font
+                            },
+                            color: '#333' // Darker font color
+                        },
+                        ticks: {
+                            font: {
+                                size: 14, // Tick font size
+                            },
+                            color: '#333' // Tick font color
+                        },
+                        min: 0,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Chart Configuration for Histogram
+        const histogramChartConfig = {
+            type: 'bar',
+            data: majorCategoriesData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true, position: 'top' }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Categories',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333'
+                        },
+                        ticks: {
+                            font: {
+                                size: 14
+                            },
+                            color: '#333'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Demand (%)',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333'
+                        },
+                        ticks: {
+                            font: {
+                                size: 14
+                            },
+                            color: '#333'
+                        },
+                        min: 0,
+                        max: 100
+                    }
+                }
+            }
+        };
+
+        // Render Charts
+        new Chart(document.getElementById('majorCategoriesChart'), histogramChartConfig); // Histogram
+        new Chart(document.getElementById('officeSuppliesChart'), lineChartConfig(officeSuppliesData)); // Office Supplies Line Chart
+        new Chart(document.getElementById('furnitureChart'), lineChartConfig(furnitureData)); // Furniture Line Chart
+        new Chart(document.getElementById('technologyChart'), lineChartConfig(technologyData)); // Technology Line Chart
+    </script>
+</body>
+</html>
